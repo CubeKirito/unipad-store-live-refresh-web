@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Unipad store live refresh</title>
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+
+  <!-- Materialize -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+
+  <!-- sweetalert -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+
+  <link rel="stylesheet" href="css/default.css">
+  <script>
+	// Live refresh
+	$("document").ready(function() {
+		loadData();
+		setInterval(loadData, 1000);
+	});
+
+	function loadData() {
+		var jsonURL = 'http://dahanlab.ml/subtree/unipad-getlist.php';
+		$.ajax({
+			url: jsonURL,
+			dataType: 'json',
+			success: function(data) {
+				var list = data.list;
+				$("#totaldownloadcount").html(data.totalCount);
+				
+				$('#data').html('<tr><th>제목</td><th>제작자</th><th>Autoplay</th><th>LED</th><th>다운로드 횟수</th></tr>');
+
+				list.forEach(function (v) {
+					$('#data').append('<tr><td>' + v.title + '</td><td>' + v.producerName + '</td><td>' + ((v.isAutoPlay == "1") ? "Yes" : "No") + '</td><td>' + ((v.isLED == "1") ? "Yes" : "No") + '</td><td>' + v.downloadCount + '</td></tr>');
+				});
+			}
+		});
+	}
+  </script>
+ </head>
+ <body>
+  <!-- Fork me on Github ribbon -->
+  <a href="https://github.com/CubeKirito/unipad-store-live-refresh-web"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+  
+  <h1>Unipad Store [LIVE]</h1><br />
+  <table id='data'></table><br />
+  <div id='total'>Total download count : <span id='totaldownloadcount'></span></div>
+  <p><input type="checkbox" id="websocket" disabled="disabled" /><label for="websocket" onclick="swal('Working on it!', '', 'error');">Websocket based refresh</label></p>
+ </body>
+</html>
